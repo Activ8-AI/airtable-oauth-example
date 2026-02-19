@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 import os, json, datetime
 
 from custody.custodian_ledger import log_event
@@ -25,7 +25,7 @@ async def relay(request: Request):
 
     if not envelope or not tool:
         log_event("RELAY_INVALID", {"body": body})
-        return {"error": "Invalid envelope"}
+        raise HTTPException(status_code=400, detail="Invalid envelope")
 
     log_event("RELAY_RECEIVED", {"tool": tool, "envelope": envelope})
     return {"status": "received", "tool": tool}
